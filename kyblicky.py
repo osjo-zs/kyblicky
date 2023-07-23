@@ -1,5 +1,6 @@
 import pygame
 import serial
+import os
 
 # Constants
 WINDOW_WIDTH = 1280
@@ -18,11 +19,15 @@ SEGMENT_WIDTH = WINDOW_WIDTH / TEAMS_COUNT / GROUPS_COUNT
 POINTS = [[LINE_POINTS for _ in range(GROUPS_COUNT)] for _ in range(TEAMS_COUNT)]
 
 ser = serial.Serial("/dev/ttyUSB0", 9600)
+
+# os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0, 0)
+
 # Initialize Pygame
 pygame.init()
 
 # Set up the display window
-window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), display=1)
+
 pygame.display.set_caption("Kyblicky")
 
 # Load the images (You need to replace the paths with your image files)
@@ -68,9 +73,10 @@ def count_points():
             if POINTS[t][group] > LINE_POINTS:
                 POINTS[t][group] = LINE_POINTS
         POINTS[team][group] -= POINTS_SUBTRACTED[group]
-        if POINTS[team][group] < 0:
+        if POINTS[team][group] <= 0:
             POINTS[team][group] = 0
-            print(f"Team {team} finished group {group}")
+            print(f"Team {team} {image_paths[team]} finished group {group}")
+        print(POINTS)
 
 
 # Main game loop
